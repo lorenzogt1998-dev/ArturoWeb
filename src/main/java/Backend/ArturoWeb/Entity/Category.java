@@ -2,7 +2,7 @@ package Backend.ArturoWeb.Entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "categories") // cambio para commit
 public class Category {
 
     @Id
