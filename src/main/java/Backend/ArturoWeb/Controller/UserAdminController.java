@@ -1,10 +1,14 @@
 package Backend.ArturoWeb.Controller;
 
+import Backend.ArturoWeb.DTO.UserAdminRequestDTO;
+import Backend.ArturoWeb.DTO.UserAdminResponseDTO;
 import Backend.ArturoWeb.Entity.UserAdmin;
+import Backend.ArturoWeb.Mapper.UserAdminMapper;
 import Backend.ArturoWeb.Service.UserAdminService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,27 +22,37 @@ public class UserAdminController {
 
     // GET ALL
     @GetMapping
-    public List<UserAdmin> getAllUsers() {
-        return service.getAllUsers();
+    public List<UserAdminResponseDTO> getAllUsers() {
+        return service.getAllUsers()
+                .stream()
+                .map(UserAdminMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     // GET BY ID
     @GetMapping("/{id}")
-    public UserAdmin getUserById(@PathVariable Long id) {
-        return service.getUserById(id)
+    public UserAdminResponseDTO getUserById(@PathVariable Long id) {
+        UserAdmin user = service.getUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return UserAdminMapper.toDTO(user);
     }
 
     // CREATE
     @PostMapping
-    public UserAdmin createUser(@RequestBody UserAdmin user) {
-        return service.createUser(user);
+    public UserAdminResponseDTO createUser(@RequestBody UserAdminRequestDTO dto) {
+        UserAdmin user = UserAdminMapper.toEntity(dto);
+        UserAdmin saved = service.createUser(user);
+        return UserAdminMapper.toDTO(saved);
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public UserAdmin updateUser(@PathVariable Long id, @RequestBody UserAdmin user) {
-        return service.updateUser(id, user);
+    public UserAdminResponseDTO updateUser(@PathVariable Long id,
+                                           @RequestBody UserAdminRequestDTO dto) {
+        UserAdmin user = UserAdminMapper.toEntity(dto);
+        UserAdmin updated = service.updateUser(id, user);
+        return UserAdminMapper.toDTO(updated);
     }
 
     // DELETE
