@@ -1,6 +1,7 @@
 package Backend.ArturoWeb.Controller;
 
-import Backend.ArturoWeb.Entity.Category;
+import Backend.ArturoWeb.DTO.CategoryRequestDTO;
+import Backend.ArturoWeb.DTO.CategoryResponseDTO;
 import Backend.ArturoWeb.Service.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,27 +19,31 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<Category> getAllCategories() {
+    public List<CategoryResponseDTO> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        return categoryService.getCategoryById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Long id) {
+        try {
+            CategoryResponseDTO category = categoryService.getCategoryById(id);
+            return ResponseEntity.ok(category);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
-    public Category createCategory(@RequestBody Category category) {
-        return categoryService.createCategory(category);
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRequestDTO requestDTO) {
+        CategoryResponseDTO createdCategory = categoryService.createCategory(requestDTO);
+        return ResponseEntity.ok(createdCategory);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id,
-                                                   @RequestBody Category categoryDetails) {
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Long id,
+                                                              @RequestBody CategoryRequestDTO requestDTO) {
         try {
-            Category updatedCategory = categoryService.updateCategory(id, categoryDetails);
+            CategoryResponseDTO updatedCategory = categoryService.updateCategory(id, requestDTO);
             return ResponseEntity.ok(updatedCategory);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
