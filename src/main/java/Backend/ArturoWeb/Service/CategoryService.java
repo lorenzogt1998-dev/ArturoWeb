@@ -1,44 +1,58 @@
 package Backend.ArturoWeb.Service;
 
+import Backend.ArturoWeb.DTO.CategoryRequestDTO;
+import Backend.ArturoWeb.DTO.CategoryResponseDTO;
 import Backend.ArturoWeb.Entity.Category;
+import Backend.ArturoWeb.Mapper.CategoryMapper;
 import Backend.ArturoWeb.Repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
 
-    private final CategoryRepository categoryRepository; //saber que categoryRepository es el puente hacia la base de datos
+    private final CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> getAllCategories() {  //trae todas las categorias
-        return categoryRepository.findAll(); //findAll trae todo
+    public List<CategoryResponseDTO> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(CategoryMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Category> getCategoryById(Long id) {
-        return categoryRepository.findById(id); //trae una categoria especifica
+    public CategoryResponseDTO getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id " + id));
+
+        return CategoryMapper.toResponseDTO(category);
     }
 
-    public Category createCategory(Category category) { //crea una nueva categoria
-        return categoryRepository.save(category);
+    public CategoryResponseDTO createCategory(CategoryRequestDTO requestDTO) {
+        Category category = CategoryMapper.toEntity(requestDTO);
+        Category savedCategory = categoryRepository.save(category);
+
+        return CategoryMapper.toResponseDTO(savedCategory);
     }
 
-    public Category updateCategory(Long id, Category categoryDetails) { //actualiza una categoria existente
-        Category category = categoryRepository.findById(id)  //busca la existente
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+    public CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO requestDTO) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id " + id));
 
-        category.setName(categoryDetails.getName());
-        category.setDescription(categoryDetails.getDescription()); // cambia algunos valores y guardandolos
+        category.setName(requestDTO.name());
+        category.setDescription(requestDTO.description());
 
-        return categoryRepository.save(category); // guarda la categoria actualizada
+        Category updatedCategory = categoryRepository.save(category);
+
+        return CategoryMapper.toResponseDTO(updatedCategory);
     }
 
-    public void deleteCategory(Long id) { //elimina una categoria por ID
-        categoryRepository.deleteById(id); //deleteById(id) elimina el registro cuyo id sea este
+    public void deleteCategory(Long id) {
+        categoryRepository.deleteById(id);
     }
 }
