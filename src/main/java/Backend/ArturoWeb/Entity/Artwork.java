@@ -5,11 +5,13 @@ import lombok.Data;
 //voy a cambiar esto para que me deje hace commit
 import java.util.Date;
 
-@Entity @Table
+@Entity
+@Table
 public class Artwork {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String description;
     private Date year;
