@@ -1,6 +1,9 @@
 package Backend.ArturoWeb.Controller;
 
+import Backend.ArturoWeb.DTO.ArtworkRequestDTO;
+import Backend.ArturoWeb.DTO.ArtworkResponseDTO;
 import Backend.ArturoWeb.Entity.Artwork;
+import Backend.ArturoWeb.Mapper.ArtworkMapper;
 import Backend.ArturoWeb.Service.ArtworkService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,28 +21,34 @@ public class ArtworkController {
     }
 
     @GetMapping
-    public List<Artwork> getAllArtworks() {
-        return artworkService.getAllArtworks();
+    public List<ArtworkResponseDTO> getAllArtworks() {
+        return artworkService.getAllArtworks()
+                .stream()
+                .map(ArtworkMapper::toDTO)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Artwork> getArtworkById(@PathVariable Long id) {
+    public ResponseEntity<ArtworkResponseDTO> getArtworkById(@PathVariable Long id) {
         return artworkService.getArtworkById(id)
-                .map(ResponseEntity::ok)
+                .map(artwork -> ResponseEntity.ok(ArtworkMapper.toDTO(artwork)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Artwork createArtwork(@RequestBody Artwork artwork) {
-        return artworkService.createArtwork(artwork);
+    public ArtworkResponseDTO createArtwork(@RequestBody ArtworkRequestDTO dto) {
+        Artwork artwork = ArtworkMapper.toEntity(dto);
+        Artwork savedArtwork = artworkService.createArtwork(artwork);
+        return ArtworkMapper.toDTO(savedArtwork);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Artwork> updateArtwork(@PathVariable Long id,
-                                                 @RequestBody Artwork artworkDetails) {
+    public ResponseEntity<ArtworkResponseDTO> updateArtwork(@PathVariable Long id,
+                                                            @RequestBody ArtworkRequestDTO dto) {
         try {
+            Artwork artworkDetails = ArtworkMapper.toEntity(dto);
             Artwork updatedArtwork = artworkService.updateArtwork(id, artworkDetails);
-            return ResponseEntity.ok(updatedArtwork);
+            return ResponseEntity.ok(ArtworkMapper.toDTO(updatedArtwork));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
