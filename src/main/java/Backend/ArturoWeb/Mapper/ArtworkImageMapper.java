@@ -1,5 +1,5 @@
 package Backend.ArturoWeb.Mapper;
-
+//cambios
 import Backend.ArturoWeb.DTO.ArtworkImageRequestDTO;
 import Backend.ArturoWeb.DTO.ArtworkImageResponseDTO;
 import Backend.ArturoWeb.Entity.ArtworkImage;

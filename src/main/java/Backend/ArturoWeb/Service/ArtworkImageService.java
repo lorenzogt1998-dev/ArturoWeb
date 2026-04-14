@@ -1,5 +1,5 @@
 package Backend.ArturoWeb.Service;
-
+//cambios
 import Backend.ArturoWeb.DTO.ArtworkImageRequestDTO;
 import Backend.ArturoWeb.DTO.ArtworkImageResponseDTO;
 import Backend.ArturoWeb.Entity.Artwork;

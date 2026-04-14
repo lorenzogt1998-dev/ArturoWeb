@@ -1,5 +1,5 @@
 package Backend.ArturoWeb.Entity;
-
+// cambios
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
