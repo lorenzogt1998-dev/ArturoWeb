@@ -1,5 +1,6 @@
 package Backend.ArturoWeb.Entity;
 
+import Backend.ArturoWeb.Enum.ArtworkStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 //voy a cambiar esto para que me deje hace commit
@@ -19,6 +20,10 @@ public class Artwork {
     private String imageUrl;
     private Long categoryId;
     private Date createdAt;
+
+    @Enumerated(EnumType.STRING)
+    private ArtworkStatus status;
+
 
     public Long getId() {
         return id;
@@ -83,8 +88,14 @@ public class Artwork {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+    public ArtworkStatus getStatus() {
+        return status;
+    }
+    public void setStatus(ArtworkStatus status){
+        this.status = status;
+    }
 
-    public Artwork(Long id, String title, String description, Date year, String technique, String imageUrl, Long categoryId, Date createdAt) {
+    public Artwork(Long id, String title, String description, Date year, String technique, String imageUrl, Long categoryId, Date createdAt, ArtworkStatus status) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -93,6 +104,7 @@ public class Artwork {
         this.imageUrl = imageUrl;
         this.categoryId = categoryId;
         this.createdAt = createdAt;
+        this.status = status;
     }
 
     public Artwork() {
