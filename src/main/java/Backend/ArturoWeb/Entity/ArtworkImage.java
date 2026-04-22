@@ -1,5 +1,5 @@
 package Backend.ArturoWeb.Entity;
-// cambios
+//voy a cambiar esto para que me deje hace commit otra vez
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
